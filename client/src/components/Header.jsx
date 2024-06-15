@@ -27,8 +27,8 @@ export default function Header() {
           <FaRegMoon/>
         </Button>
         <Link to='/login'>
-        <Button gradientDuoTone='purpleToBlue'>
-          Login
+        <Button gradientDuoTone='greenToBlue' outline>
+          Entrar
         </Button>
         </Link>
         <NavbarToggle>
