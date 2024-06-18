@@ -23,11 +23,11 @@ export default function Header() {
         <FaSearch/>
       </Button>
       <div className="flex gap-2 md:order-2">
-        <Button className='w-12 h-10 hidden sm:inline' color='gray' pill>
+        {/* <Button className='w-12 h-10 hidden sm:inline' color='gray' pill>
           <FaRegMoon/>
-        </Button>
+        </Button> */}
         <Link to='/login'>
-        <Button gradientDuoTone='greenToBlue' outline>
+        <Button gradientDuoTone='greenToBlue'>
           Entrar
         </Button>
         </Link>
