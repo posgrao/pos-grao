@@ -3,12 +3,20 @@ import PG01 from "../assets/pg-register.png";
 import { Label, Button, Alert, Spinner } from "flowbite-react";
 import { useState } from "react";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
 
-export default function Signup() {
+export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -22,30 +30,28 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.username || !formData.email || !formData.password) {
-      return setErrorMessage('Favor preencher todos os campos acima.');
+    if (!formData.email || !formData.password) {
+      return dispatch(signInFailure("Favor preencher todos os campos acima."));
     }
 
-    // Submit the form
+    //Submit the form
     try {
-      setLoading(true);
-      setErrorMessage(null);
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      dispatch(signInStart());
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
       if (data.success === false) {
-        setLoading(false);
-        return setErrorMessage(data.message);
+        dispatch(signInFailure(data.message));
       }
       if (res.ok) {
-        navigate('/sign-in');
+        dispatch(signInSuccess(data));
+        navigate("/");
       }
     } catch (error) {
-      setErrorMessage('An error occurred. Please try again.');
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
 
@@ -65,16 +71,6 @@ export default function Signup() {
         {/* right */}
         <div className="flex-1">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <Label value="Usuário" />
-              <input
-                type="text"
-                placeholder="Seu usuário"
-                id="username"
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-2"
-              />
-            </div>
             <div>
               <Label value="E-mail" />
               <input
@@ -98,7 +94,7 @@ export default function Signup() {
                 <div
                   onClick={togglePasswordVisibility}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer text-gray-500"
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                  style={{ top: "50%", transform: "translateY(-50%)" }}
                 >
                   {showPassword ? (
                     <AiFillEyeInvisible size={20} />
@@ -119,14 +115,16 @@ export default function Signup() {
                   <Spinner size="sm" />
                   <span className="pl-3">Loading...</span>
                 </>
-              ) : 'Criar conta'}
+              ) : (
+                "Entrar"
+              )}
             </Button>
             <OAuth />
           </form>
           <div className="flex gap-2 text-sm mt-5">
-            <span>Já tem uma conta?</span>
-            <Link to="/signin" className="text-green-600">
-              Entrar.
+            <span>Não tem uma conta ainda?</span>
+            <Link to="/signup" className="text-green-600">
+              Registre-se.
             </Link>
           </div>
           {/* Alert */}
