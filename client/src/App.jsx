@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 import Footer from "./components/Footer";
 import PremiumBanner from "./components/PremiumBanner";
+import PrivateRoute from "./components/PrivateRoute";
 
 
 export default function App() {
@@ -24,7 +25,9 @@ export default function App() {
         <Route path="/signup" element={<Signup/>} />
         <Route path="/signin" element={<Signin/>} />
         <Route path="/projects" element={<Projects />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
       </Routes>
       <Footer/>
     </BrowserRouter>
